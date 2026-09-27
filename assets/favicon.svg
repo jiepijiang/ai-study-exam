@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-labelledby="favicon-title favicon-desc">
+  <title id="favicon-title">AI Agent learning verification</title>
+  <desc id="favicon-desc">A compact ascending learning path with a verification check.</desc>
+  <rect x="1.5" y="1.5" width="29" height="29" rx="7" fill="#F5FBF9" stroke="#CFE9E2" stroke-width="1.5"/>
+  <path d="M6 22h5v-5h5v-5h5V8" fill="none" stroke="#15524D" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="21.5" cy="21" r="6.5" fill="#DDF4EE" stroke="#15524D" stroke-width="2"/>
+  <path d="m18.5 21 2.1 2.1 4.1-4.5" fill="none" stroke="#128C78" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="21" cy="8" r="1.8" fill="#EAB66A"/>
+</svg>

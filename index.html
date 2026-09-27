@@ -3,7 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>AI Agent 学习证据与门禁系统 v3</title>
+<meta name="theme-color" content="#0f766e">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<title>AI Agent 学习检测台 v3</title>
 <style>
 :root{--bg:#0d1117;--panel:#151b23;--panel2:#1b232d;--line:#2b3542;--fg:#e6edf3;--mut:#8b98a5;--acc:#4f8cff;--ok:#3fb950;--bad:#f85149;--warn:#d29922;--purple:#a371f7}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.6 system-ui,"Segoe UI","Microsoft YaHei",sans-serif}
@@ -29,20 +31,70 @@ pre{white-space:pre-wrap;word-break:break-word;background:#0b1016;border:1px sol
 .review{border-top:1px solid var(--line);padding:10px 0}.review:first-child{border-top:0}.due{color:var(--warn);font-weight:600}.overdue{color:var(--bad);font-weight:600}
 @media(max-width:900px){.task-form{grid-template-columns:1fr 1fr}.task-form input[data-ev=hash]{grid-column:auto}main{padding:14px}nav{top:58px}}
 </style>
+<style>
+/* UI standard v1.0: calm engineering workbench, shared by PC and H5. */
+:root{
+  --bg:#f4f6f5;--panel:#fff;--panel2:#edf2f0;--line:#d8e2de;
+  --fg:#17221f;--mut:#60706b;--acc:#0f766e;--acc-strong:#115e59;
+  --acc-soft:#d9f0eb;--ok:#15803d;--bad:#b42318;--warn:#b45309;
+  --info:#2563eb;--purple:#7c3aed;--shadow:0 8px 24px rgba(23,34,31,.06);
+}
+*{box-sizing:border-box}
+html{background:var(--bg);scroll-behavior:smooth}
+body{min-height:100vh;margin:0;background:var(--bg);color:var(--fg);font:14px/1.6 "Microsoft YaHei","PingFang SC",system-ui,sans-serif;display:grid;grid-template-columns:232px minmax(0,1fr);grid-template-rows:auto 1fr}
+body::selection{background:var(--acc-soft);color:var(--fg)}
+header{grid-column:1/-1;grid-row:1;min-height:76px;padding:16px 28px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:18px;position:sticky;top:0;background:rgba(255,255,255,.94);z-index:20;backdrop-filter:blur(14px)}
+.brand{display:flex;align-items:center;gap:12px;min-width:0}.brand img{width:42px;height:42px;flex:0 0 42px}.brand-copy{min-width:0}
+h1{font-size:20px;line-height:1.25;letter-spacing:0;margin:0;display:flex;align-items:center;gap:8px;flex-wrap:wrap}header .mut{color:var(--mut);font-size:12px}.brand-subtitle{margin:3px 0 0;color:var(--mut);font-size:12px}
+.version{display:inline-flex;align-items:center;height:22px;padding:0 7px;border-radius:999px;background:var(--acc-soft);color:var(--acc-strong);font:600 11px/1 ui-monospace,"Cascadia Code",Consolas,monospace}
+.topbar-meta{margin-left:auto;display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end}.save-state{padding-left:10px;border-left:1px solid var(--line)}
+nav{grid-column:1;grid-row:2;display:flex;flex-direction:column;gap:4px;padding:24px 14px;position:sticky;top:76px;height:calc(100vh - 76px);overflow:auto;background:#e9f0ed;border-right:1px solid var(--line);z-index:10}
+nav::before{content:"工作台";padding:0 12px 10px;color:var(--mut);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+nav button{width:100%;min-height:44px;display:flex;align-items:center;gap:10px;white-space:nowrap;background:transparent;color:var(--mut);border:1px solid transparent;border-radius:6px;padding:9px 12px;cursor:pointer;font:600 13px/1.3 inherit;text-align:left;transition:background .15s ease,color .15s ease,border-color .15s ease}
+nav button:hover{background:rgba(255,255,255,.72);color:var(--fg)}nav button.on{color:var(--acc-strong);background:#fff;border-color:#c8ded8;box-shadow:0 2px 6px rgba(23,34,31,.05)}
+.nav-icon{width:18px;height:18px;flex:none;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}.nav-label{overflow:hidden;text-overflow:ellipsis}
+main{grid-column:2;grid-row:2;width:100%;max-width:1240px;padding:30px 32px 56px;margin:0 auto;min-width:0}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:16px}
+.stat{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-bottom:20px}.stat>div{min-width:0;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:15px 16px;box-shadow:var(--shadow)}.stat b{font:700 24px/1.2 ui-monospace,"Cascadia Code",Consolas,monospace;display:block;color:var(--fg)}.stat span{display:block;margin-top:6px;color:var(--mut);font-size:12px;line-height:1.45}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:20px;margin-bottom:16px;box-shadow:var(--shadow)}.sub{background:var(--panel2);border:1px solid var(--line);border-radius:4px;padding:14px;margin:12px 0}.card>.sub:last-child{margin-bottom:0}
+.hint{color:var(--mut);font-size:12px;line-height:1.55}.small{font-size:12px}.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.between{display:flex;justify-content:space-between;gap:16px;align-items:center;flex-wrap:wrap}.right{margin-left:auto}
+label{color:var(--fg);font-size:13px;font-weight:600}label:has(> select),label:has(> input){display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap}
+input,select,textarea{width:100%;min-width:0;background:#fff;color:var(--fg);border:1px solid #bdcdc8;border-radius:4px;padding:9px 10px;font:inherit;font-size:13px;line-height:1.4}select{height:40px}textarea{min-height:84px;resize:vertical}input::placeholder,textarea::placeholder{color:#8a9994}input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible{outline:2px solid var(--acc);outline-offset:2px;border-color:var(--acc)}
+button.act{min-height:40px;background:var(--acc);color:#fff;border:1px solid var(--acc);border-radius:4px;padding:9px 15px;cursor:pointer;font:700 13px/1.3 inherit;transition:background .15s ease,border-color .15s ease}button.act:hover{background:var(--acc-strong);border-color:var(--acc-strong)}button.ghost{min-height:40px;background:#fff;color:var(--fg);border:1px solid #bdcdc8;border-radius:4px;padding:8px 13px;cursor:pointer;font:600 13px/1.3 inherit;transition:background .15s ease,border-color .15s ease,color .15s ease}button.ghost:hover{color:var(--acc-strong);border-color:var(--acc);background:var(--acc-soft)}button.act:disabled,button.ghost:disabled{opacity:.48;cursor:not-allowed}
+.pill{display:inline-flex;align-items:center;min-height:24px;font-size:11px;line-height:1.2;color:var(--mut);border:1px solid var(--line);border-radius:999px;padding:3px 8px;white-space:nowrap}.pill.ok{color:#166534;background:#dcfce7;border-color:#bbf7d0;font-weight:700}.pill.bad{color:#991b1b;background:var(--bad-soft,#fee4e2);border-color:#fecaca}.pill.warn{color:#92400e;background:#fef3c7;border-color:#fde68a}.pill.info{color:#1d4ed8;background:#dbeafe;border-color:#bfdbfe}
+.bar{height:7px;background:#dfe9e5;border-radius:999px;overflow:hidden;margin-top:6px}.bar i{display:block;height:100%;background:var(--acc)}.bar i.ok{background:var(--ok)}.bar i.bad{background:var(--bad)}
+.task{border-top:1px solid var(--line);padding:20px 0 4px}.task:first-child{border-top:0;padding-top:16px}.task .ttext{font-size:14px;font-weight:600;line-height:1.65;margin:10px 0 4px}.task .out{color:var(--acc-strong);font-size:12px;margin:6px 0 12px;padding-left:10px;border-left:3px solid var(--acc-soft)}
+.task-form{display:grid;grid-template-columns:minmax(125px,.7fr) minmax(135px,.8fr) minmax(180px,1.2fr) minmax(180px,1.2fr) minmax(90px,.55fr);gap:8px;margin-top:12px;align-items:start}.task-form textarea{grid-column:1/-1;min-height:72px}.task-form input[data-ev=hash]{grid-column:1/3}.ev-warn{margin-top:8px;font-size:12px;color:var(--warn);overflow-wrap:anywhere}.ev-ok{color:var(--ok)}
+.q{border-top:1px solid var(--line);padding:22px 0 4px}.q:first-child{border-top:0;padding-top:12px}.q .stem{font-size:15px;font-weight:700;line-height:1.65;margin:12px 0 14px;max-width:82ch}.opt{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;color:var(--fg);cursor:pointer;border:1px solid transparent;border-radius:4px;line-height:1.55}.opt:hover{background:var(--panel2);border-color:var(--line)}.opt input{width:18px;height:18px;flex:none;margin:1px 0 0;accent-color:var(--acc)}
+table{width:100%;border-collapse:collapse;font-size:12px}th,td{text-align:left;padding:10px 9px;border-bottom:1px solid var(--line);vertical-align:top;line-height:1.5}th{color:var(--mut);font-weight:700;background:var(--panel2)}tbody tr:hover{background:#f7faf9}td{overflow-wrap:anywhere}
+pre{white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word;background:#f5f8f7;border:1px solid var(--line);border-radius:4px;padding:16px;max-height:620px;overflow:auto;font:12px/1.65 ui-monospace,"Cascadia Code",Consolas,monospace;color:#29423b}.check{display:flex;gap:9px;align-items:flex-start;color:var(--fg);font-size:12px;line-height:1.5;margin:8px 0;cursor:pointer}.check input{width:17px;height:17px;flex:none;margin:1px 0 0;accent-color:var(--acc)}
+.gate{border-left:3px solid var(--line)}.gate.ok{border-left-color:var(--ok)}.gate.warn{border-left-color:var(--warn)}.gate.bad{border-left-color:var(--bad)}.review{border-top:1px solid var(--line);padding:18px 0}.review:first-child{border-top:0;padding-top:4px}.review textarea{margin:12px 0}.due{color:var(--warn);font-weight:700}.overdue{color:var(--bad);font-weight:700}
+#v-checkin>.card:first-child,#v-exam>.card:first-child,#v-review>.card:first-child,#v-mastery>.card:first-child,#v-report>.card:first-child{position:relative}#launchContext{color:var(--acc-strong);font-weight:600}#examHint{max-width:90ch}#examHistory table,#masteryBody table{min-width:700px}#examHistory>.card,#masteryBody>.card{overflow-x:auto}.task-form.sub{margin-top:12px}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+@media (max-width:1199px){.stat{grid-template-columns:repeat(3,minmax(0,1fr))}.task-form{grid-template-columns:repeat(3,minmax(0,1fr))}.task-form textarea{grid-column:1/-1}}
+@media (max-width:959px){body{display:block;height:100dvh;overflow:hidden;padding-bottom:0}header{min-height:68px;padding:13px 18px}.topbar-meta{gap:6px}.brand-subtitle{display:none}nav{position:fixed;left:0;right:0;bottom:0;top:auto;width:auto;height:auto;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;padding:7px 8px calc(7px + env(safe-area-inset-bottom));background:rgba(255,255,255,.96);border-top:1px solid var(--line);border-right:0;box-shadow:0 -5px 18px rgba(23,34,31,.08);overflow:visible}nav::before{display:none}nav button{min-height:56px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:3px;padding:5px 2px;border-radius:4px;text-align:center;font-size:10px}nav button.on{box-shadow:none}nav button .nav-icon{width:19px;height:19px}main{height:calc(100dvh - 68px - 72px);overflow:auto;padding:22px 20px 36px;margin:0;max-width:none}.card{padding:16px;margin-bottom:12px}.stat{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:12px}.stat>div{padding:12px}.stat b{font-size:20px}.task-form{grid-template-columns:1fr 1fr}.task-form input[data-ev=hash]{grid-column:auto}.between{gap:10px}.right{margin-left:auto}}
+@media (max-width:599px){h1{font-size:18px}.brand img{width:36px;height:36px;flex-basis:36px}.brand{gap:9px}.topbar-meta{margin-left:auto}.save-state{display:none}header .mut{font-size:11px}main{padding:18px 16px 28px}.stat{grid-template-columns:repeat(2,minmax(0,1fr))}.stat>div:last-child{grid-column:1/-1}.task-form{grid-template-columns:1fr}.task-form textarea{grid-column:auto}.task{padding-top:18px}.task .ttext{font-size:13px}.q .stem{font-size:14px}.row{gap:7px}.row>label{width:100%}label:has(> select),label:has(> input){width:100%;justify-content:space-between}label:has(> select) select,label:has(> input) input{flex:1;width:auto}.topbar-meta #launchContext{display:none}.card>.between> .row{width:100%}.card>.between> .row button{flex:1}.task-form.sub{padding:0;margin-top:12px;background:transparent;border:0}.sub{padding:12px}.pill{font-size:10px}#examHistory table,#masteryBody table{font-size:11px}.review .row .right{width:auto;margin-left:auto}nav button{font-size:9px}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition-duration:.01ms!important;animation-duration:.01ms!important}}
+</style>
 </head>
 <body>
-<header>
-  <h1>🧪 AI Agent 学习证据与门禁系统 <span class="mut" id="bankVer">v3.1</span></h1>
-  <span class="mut">每日任务证据 · 周测重考 · 1/3/7/21 复习 · M1-M4 门禁</span>
-  <span class="mut" id="launchContext"></span>
-  <span class="mut right" id="savedTip">本地存储：尚未写入</span>
+<header class="topbar">
+  <div class="brand">
+    <img src="assets/brand-mark.svg" alt="AI Agent 学习检测台 Logo">
+    <div class="brand-copy">
+      <h1>AI Agent 学习检测台 <span class="version" id="bankVer">v3.1</span></h1>
+      <p class="brand-subtitle">学习任务、证据、周测与能力门禁</p>
+    </div>
+  </div>
+  <div class="topbar-meta">
+    <span class="mut" id="launchContext"></span>
+    <span class="mut save-state" id="savedTip">本地存储：尚未写入</span>
+  </div>
 </header>
-<nav>
-  <button data-tab="checkin" class="on">📅 每日打卡与证据</button>
-  <button data-tab="exam">📝 周测与重考</button>
-  <button data-tab="review">🔁 复习队列</button>
-  <button data-tab="mastery">📈 掌握度与门禁</button>
-  <button data-tab="report">📄 报告导出</button>
+<nav aria-label="学习检测台导航">
+  <button data-tab="checkin" class="on" aria-current="page"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"></rect><path d="M8 2v4M16 2v4M3 10h18M8 14h3M8 18h6"></path></svg><span class="nav-label">每日打卡</span></button>
+  <button data-tab="exam"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z"></path><path d="M7 7h10M7 11h3M14 11h3M7 15h3M14 15h3M7 19h3"></path></svg><span class="nav-label">周测</span></button>
+  <button data-tab="review"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"></path><path d="M3 4v6h6M12 7v5l3 2"></path></svg><span class="nav-label">复习队列</span></button>
+  <button data-tab="mastery"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V5M4 19h17"></path><path d="m7 15 4-4 3 2 5-6"></path><path d="M16 7h3v3"></path></svg><span class="nav-label">掌握度</span></button>
+  <button data-tab="report"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l4 4v14H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z"></path><path d="M14 3v5h5M8 12h8M8 16h8"></path></svg><span class="nav-label">报告</span></button>
 </nav>
 <main>
 <section id="v-checkin">
@@ -63,8 +115,8 @@ pre{white-space:pre-wrap;word-break:break-word;background:#0b1016;border:1px sol
       <button class="ghost" id="retakeBtn" disabled>重新考试（保留历史）</button>
       <span id="examLock" class="hint right"></span>
     </div>
-    <div class="row" style="margin-top:8px"><label class="hint">补强产物（补考必填）：<input id="retakeEvidence" placeholder="补强产物路径或说明（至少 8 字符）" style="min-width:260px"></label></div>
-<div class="hint" id="examHint" style="margin-top:8px"></div>
+    <div class="row exam-evidence-row"><label class="hint" for="retakeEvidence">补强产物（补考必填）：<input id="retakeEvidence" placeholder="补强产物路径或说明（至少 8 字符）"></label></div>
+<div class="hint exam-hint" id="examHint"></div>
   </div>
   <div id="examBody"></div>
   <div id="examHistory"></div>
@@ -186,7 +238,7 @@ function syncExamInputs(){if(!currentExam)return;Object.keys(currentExam.answers
 function bindExamEvents(){var sel=el("weekSel");sel.innerHTML=WEEKS.map(function(w){return "<option value=\""+w.week+"\">W"+w.week+" · "+esc(w.title)+"</option>";}).join("");el("startBtn").onclick=function(){startExam(false);};el("retakeBtn").onclick=function(){startExam(true);};sel.onchange=function(){renderExam();};el("examBody").addEventListener("change",function(e){if(!currentExam)return;syncExamInputs();});el("examBody").addEventListener("input",function(e){if(!currentExam)return;var box=e.target.closest("[data-qid]"),qid=box&&box.getAttribute("data-qid");if(qid&&e.target.hasAttribute("data-open-answer"))currentExam.open[qid]=e.target.value;if(qid&&e.target.hasAttribute("data-field")){if(!currentExam.evidence[qid])currentExam.evidence[qid]={};currentExam.evidence[qid][e.target.dataset.field]=e.target.value;}saveState();});el("examBody").addEventListener("click",function(e){if(e.target.id==="submitExam")submitExam();});}
 function bindReviewEvents(){el("refreshReviewBtn").onclick=function(){renderReview();renderOverview();};el("reviewBody").addEventListener("click",function(e){var b=e.target.closest("[data-review-action]");if(!b)return;var qid=b.getAttribute("data-qid"),note=document.querySelector('[data-review-note="'+qid+'"]');recordReview(qid,b.getAttribute("data-review-action"),note?note.value:"");});}
 function bindMasteryEvents(){el("refreshMasteryBtn").onclick=function(){refreshMastery();renderMastery();renderReport();};el("masteryBody").addEventListener("change",function(e){var t=e.target,m;if(t.hasAttribute("data-inf00")){state.inf00=state.inf00||{};state.inf00[t.getAttribute("data-inf00")]=t.checked;}else if(t.hasAttribute("data-gate-evidence")){m=t.getAttribute("data-gate-evidence");state.gateEvidence=state.gateEvidence||{};state.gateEvidence[m]=state.gateEvidence[m]||[];state.gateEvidence[m][Number(t.dataset.idx)]=t.checked;}else if(t.hasAttribute("data-gate-safety")){m=t.getAttribute("data-gate-safety");state.gateSafety=state.gateSafety||{};state.gateSafety[m]=state.gateSafety[m]||[];state.gateSafety[m][Number(t.dataset.idx)]=t.checked;}else if(t.hasAttribute("data-redline")){m=t.getAttribute("data-redline");state.redlines=state.redlines||{};state.redlines[m]=state.redlines[m]||{};state.redlines[m][t.getAttribute("data-rid")]=t.checked;}else{return;}refreshMastery();renderMastery();renderReport();saveState();});el("masteryBody").addEventListener("click",function(e){var b=e.target.closest("[data-gate-snapshot]");if(b)recordGateSnapshot(b.getAttribute("data-gate-snapshot"));});}
-function switchTab(name){currentTab=name;document.querySelectorAll("nav button").forEach(function(b){b.classList.toggle("on",b.getAttribute("data-tab")===name);});["checkin","exam","review","mastery","report"].forEach(function(x){el("v-"+x).hidden=x!==name;});}
+function switchTab(name){currentTab=name;document.querySelectorAll("nav button").forEach(function(b){var active=b.getAttribute("data-tab")===name;b.classList.toggle("on",active);if(active)b.setAttribute("aria-current","page");else b.removeAttribute("aria-current");});["checkin","exam","review","mastery","report"].forEach(function(x){el("v-"+x).hidden=x!==name;});}
 function bindAll(){document.querySelectorAll("nav button").forEach(function(b){b.onclick=function(){switchTab(b.getAttribute("data-tab"));};});bindCheckinEvents();bindExamEvents();bindReviewEvents();bindMasteryEvents();el("checkWeekSel").onchange=function(){checkWeek=Number(this.value);renderCheckin();};el("copyMd").onclick=function(){var text=buildReportMd();if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(text).then(function(){alert("Markdown 已复制");});else{var t=document.createElement("textarea");t.value=text;document.body.appendChild(t);t.select();document.execCommand("copy");t.remove();alert("Markdown 已复制");}};el("downloadMd").onclick=function(){download("exam-report-"+Date.now()+".md",buildReportMd(),"text/markdown");};el("downloadJson").onclick=function(){download("exam-report-"+Date.now()+".json",JSON.stringify(reportData(),null,2),"application/json");};el("resetBtn").onclick=function(){if(confirm("确认清空本地 v3 打卡、考试、复习和门禁数据？此操作不可撤销。")){localStorage.removeItem(KEY);state=defaultState();renderAll();}};}
 function download(name,text,type){var a=document.createElement("a"),blob=new Blob([text],{type:type+";charset=utf-8"});a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(function(){URL.revokeObjectURL(a.href);},0);}
 function renderAll(){el("bankVer").textContent="v"+(BANK.bankVersion||BANK.version||"3.0");renderCheckWeekSel();renderOverview();renderCheckin();renderExam();renderReview();refreshMastery(false);renderMastery();renderReport();}
@@ -204,7 +256,10 @@ function applyLaunchContext(){
   if(context&&(launchDate||launchWeek))context.textContent="消息入口"+(launchDate?" · "+launchDate:"")+(launchWeek?" · W"+launchWeek:"");
   if(["checkin","exam","review","mastery","report"].indexOf(launchTab)>=0)switchTab(launchTab);
 }
-function init(){bindAll();renderAll();applyLaunchContext();}
+var formFieldSeed=0;
+function ensureFormNames(){document.querySelectorAll("input,select,textarea").forEach(function(node){if(!node.id&&!node.name){formFieldSeed+=1;node.name=(node.dataset.field||node.type||node.tagName.toLowerCase())+"-"+formFieldSeed;}});}
+function watchFormFields(){ensureFormNames();var observer=new MutationObserver(function(){ensureFormNames();});observer.observe(document.body,{childList:true,subtree:true});}
+function init(){bindAll();renderAll();applyLaunchContext();watchFormFields();}
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init);else init();
 })();
 </script>
