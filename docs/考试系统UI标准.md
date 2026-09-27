@@ -191,7 +191,7 @@
   `examHistory`、`reviewBody`、`masteryBody`、`reportBody`、
   `refreshReviewBtn`、`refreshMasteryBtn`、`copyMd`、`downloadMd`、
   `downloadJson`、`resetBtn`。
-- 不修改 `ai-agent-learning-evidence-v3` 存储键和已有数据结构。
+- 不修改 `ai-agent-learning-evidence-v3` 存储键和已有数据结构；新增的 `activeExam` 仅用于恢复进行中的未提交试卷，可为空，不覆盖考试历史。
 
 ## 9. UI 验收清单
 
@@ -217,4 +217,3 @@
 - [ ] 键盘可访问所有导航、输入、复选框和按钮。
 - [ ] `focus-visible` 清晰，缩放到 200% 时主要内容仍可读。
 - [ ] 减少动态效果设置生效。
-
