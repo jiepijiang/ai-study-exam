@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "questionBankVersion": "3.1",
+  "dailyLinkTemplate": "./index.html?date={date}&week={week}&tab=checkin",
+  "examLinkTemplate": "./index.html?date={date}&week={week}&tab=exam",
+  "checkin": {
+    "mode": "local-only",
+    "localStorageKey": "ai-agent-learning-evidence-v3",
+    "remoteSync": "pending-feishu-approval"
+  }
+}
