@@ -3,14 +3,14 @@ import crypto from 'node:crypto';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import fs from 'node:fs/promises';
-import { JsonStore } from './store.mjs';
+import { createStore } from './store.mjs';
 import { clearSessionCookie, createSession, hashPassword, normalizeIdentity, readCookies, SESSION_COOKIE, sessionHash, setSessionCookie, validatePassword, verifyPassword } from './auth.mjs';
 import { contentSummary, getBank, getPlan, getPlanEntry, getQuestion, getQuestions, getTodayPlan, getWeek, getWeekQuestions, publicQuestion, publicQuestions, questionCount } from './content.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const port = Number(process.env.PORT || 8787);
 const dataDir = process.env.DATA_DIR || path.resolve(here, '../data');
-const store = new JsonStore(path.join(dataDir, 'db.json'));
+const store = await createStore(path.join(dataDir, 'db.json'));
 const jsonHeaders = { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' };
 const allowedMethods = new Set(['GET', 'POST', 'OPTIONS']);
 
@@ -126,6 +126,7 @@ async function route(req, res) {
   const method = req.method;
   if (!allowedMethods.has(method)) return fail(res, 405, 'METHOD_NOT_ALLOWED', '不支持该 HTTP 方法');
   if (method === 'OPTIONS') return send(res, 204, undefined, { 'Access-Control-Allow-Methods': 'GET,POST,OPTIONS', 'Access-Control-Allow-Headers': 'Content-Type', 'Access-Control-Allow-Credentials': 'true' });
+  if (method === 'GET' && pathname === '/healthz') return ok(res, { ok: true, storage: process.env.DATABASE_URL ? 'postgres' : 'json' });
   if (!pathname.startsWith('/api/')) return serveStatic(req, res, pathname);
 
   const query = parseQuery(req.url);
@@ -318,4 +319,5 @@ const server = http.createServer(async (req, res) => {
   }
   try { await route(req, res); } catch (error) { console.error(error); fail(res, error.status || 500, error.code || 'INTERNAL_ERROR', error.status ? error.message : '服务器内部错误'); }
 });
-server.listen(port, '127.0.0.1', () => console.log(`AI study API listening on http://127.0.0.1:${port}`));
+const host = process.env.HOST || '0.0.0.0';
+server.listen(port, host, () => console.log(`AI study API listening on http://${host}:${port}`));

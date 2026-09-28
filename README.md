@@ -75,7 +75,17 @@ cd fullstack
 npm run smoke
 ```
 
-GitHub Pages 仍然只部署根目录的静态版，不能承载登录、数据库或 App Secret。全栈版本当前只适合本机验证；团队部署前，需要把 JSON 存储替换为 SQLite/PostgreSQL，补充 HTTPS、限流、CSRF、审计日志和正式部署配置，并使用独立的 Node 服务平台。
+GitHub Pages 仍然只部署根目录的静态版，不能承载登录、数据库或 App Secret。全栈版本支持通过 `DATABASE_URL` 切换到 PostgreSQL，Render 部署配置位于仓库根目录的 `render.yaml`。免费部署建议使用 Render Free Web Service + Supabase Free PostgreSQL；Render 免费服务会休眠且本地文件系统不持久化，因此线上必须配置 PostgreSQL。
+
+部署步骤：
+
+1. 在 Supabase 创建 Free 项目，复制 PostgreSQL 连接串；不要把连接串提交到 Git。
+2. 在 Render 选择 `New Blueprint`，导入本仓库并使用 `render.yaml`。
+3. 在 Render 的 `DATABASE_URL` 环境变量中粘贴 Supabase 连接串；`DATABASE_SSL=true` 和 `COOKIE_SECURE=true` 保持开启。
+4. Render 的 `Root Directory`、构建命令、启动命令和健康检查会由 Blueprint 设置为 `fullstack`、`npm install`、`npm start`、`/healthz`。
+5. 使用 Render 生成的服务地址访问全栈版本；GitHub Pages 继续作为静态题库和文档入口。
+
+Render 免费服务首次访问可能需要等待唤醒；Supabase 免费项目长期无访问可能暂停。上线前仍需补充限流、CSRF、审计日志、管理员人工复核和正式数据库迁移。
 
 ## 参考站点审计
 

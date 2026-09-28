@@ -1,8 +1,9 @@
 # AI Agent 学习系统后端 MVP
 
-这是一个 Node.js 内置模块实现的本地多用户后端。题库和学习计划从发布仓库根目录的
-`../question-bank.json`、`../daily-plan.json` 只读加载；用户状态写入
-`fullstack/data/db.json`，首次启动自动创建目录和文件。
+这是一个 Node.js 内置模块实现的多用户后端。题库和学习计划从发布仓库根目录的
+`../question-bank.json`、`../daily-plan.json` 只读加载；默认状态写入
+`fullstack/data/db.json`。设置 `DATABASE_URL` 后会自动使用 PostgreSQL，并创建
+`ai_study_state` 表保存状态。
 
 ## 启动
 
@@ -11,9 +12,11 @@ cd fullstack
 npm start
 ```
 
-环境变量：`PORT` 默认 `8787`；`DATA_DIR` 可指定 JSON 数据目录；`CORS_ORIGIN`
+环境变量：`PORT` 默认 `8787`；`HOST` 默认 `0.0.0.0`；`DATA_DIR` 可指定 JSON 数据目录；`DATABASE_URL`
+存在时切换到 PostgreSQL；`DATABASE_SSL` 默认启用 SSL；`COOKIE_SECURE=true` 为 HTTPS Cookie；`CORS_ORIGIN`
 只允许一个明确的前端 Origin，并配合凭据请求使用。生产部署应把 `DATA_DIR` 换成
 PostgreSQL、SQLite 或其他具备并发和备份能力的存储，不应把 JSON 文件当作生产数据库。
+健康检查地址为 `GET /healthz`。
 
 ## 接口
 
