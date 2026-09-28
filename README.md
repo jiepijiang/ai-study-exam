@@ -51,3 +51,32 @@ https://jiepijiang.github.io/ai-study-exam/index.html?date=2026-09-28&week=1&tab
 ## 当前边界
 
 打卡状态保存在浏览器 localStorage，当前是本地单机 MVP；清理浏览器存储后无法恢复。飞书同步依赖应用审批，正式接入前不发送或保存飞书凭证。GitHub Pages 仅托管静态题库和页面。
+
+## 全栈版本
+
+`fullstack/` 是新增的本地全栈版本，用于登录、多用户数据隔离和服务端学习闭环。它与根目录静态版是两套运行入口：
+
+```powershell
+cd fullstack
+npm start
+```
+
+打开 <http://127.0.0.1:8787>。项目使用 Node.js 内置 HTTP 服务和 JSON 持久化，包含：
+
+- 用户注册、登录、退出和 HttpOnly 会话；密码使用 `crypto.scrypt` 哈希保存。
+- 每日计划、证据打卡、周测提交、考试历史、复习队列、学习报告和个人笔记。
+- 题目接口不会返回答案、解析或 Rubric；客观题由服务端判分，开放题明确标记为人工复核。
+- 明亮/暗黑主题、桌面侧栏、H5 底部导航和响应式周测界面。
+
+后端接口说明在 `fullstack/server/API.md`，冒烟测试：
+
+```powershell
+cd fullstack
+npm run smoke
+```
+
+GitHub Pages 仍然只部署根目录的静态版，不能承载登录、数据库或 App Secret。全栈版本当前只适合本机验证；团队部署前，需要把 JSON 存储替换为 SQLite/PostgreSQL，补充 HTTPS、限流、CSRF、审计日志和正式部署配置，并使用独立的 Node 服务平台。
+
+## 参考站点审计
+
+基于用户 Edge 登录会话完成的参考功能清单位于 `docs/参考站点功能审计.md`，包含首页、刷题、题库搜索、知识导图、论文、冲刺、周测、复习、报告和个人中心的映射边界。审计没有读取 Cookie、密码或 Token，也没有复制参考站点代码和品牌资源。

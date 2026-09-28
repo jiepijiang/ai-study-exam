@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#f5f7fb" />
+    <meta name="description" content="AI Agent 应用工程学习工作台" />
+    <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/styles.css" />
+    <title>Agent Lab · 学习工作台</title>
+  </head>
+  <body>
+    <div id="toast-region" class="toast-region" aria-live="polite" aria-atomic="true"></div>
+
+    <section id="auth-shell" class="auth-shell" aria-label="账户入口">
+      <div class="auth-rail">
+        <a class="brand brand-large" href="#overview" aria-label="Agent Lab 首页">
+          <img src="/assets/brand-mark.svg" alt="" />
+          <span><strong>Agent Lab</strong><small>嵌入式团队学习工作台</small></span>
+        </a>
+        <div class="auth-rail-copy">
+          <span class="eyebrow">FIELD NOTES / 2026</span>
+          <h1>把学习过程，<br /><em>变成可验证的工程能力。</em></h1>
+          <p>围绕 FWA、AIoT 和 Tracker 产品线，按任务、练习和周测持续积累 Agent 应用开发能力。</p>
+          <div class="auth-proof"><span class="proof-dot"></span><span>本地学习记录已加密保存在当前设备</span></div>
+        </div>
+        <div class="auth-rail-footer">AI Agent 应用工程 · v0.1</div>
+      </div>
+      <div class="auth-panel">
+        <div class="auth-topline"><span>欢迎回来</span><button class="icon-btn" data-action="theme" aria-label="切换主题"></button></div>
+        <div class="auth-card">
+          <div class="auth-heading">
+            <span class="section-kicker">学习账户</span>
+            <h2 id="auth-title">登录工作台</h2>
+            <p id="auth-subtitle">登录后同步你的学习进度、周测成绩和复习队列。</p>
+          </div>
+          <div class="auth-tabs" role="tablist" aria-label="登录或注册">
+            <button class="auth-tab is-active" data-auth-mode="login" role="tab" aria-selected="true">登录</button>
+            <button class="auth-tab" data-auth-mode="register" role="tab" aria-selected="false">注册</button>
+          </div>
+          <form id="auth-form" class="stack-form">
+            <label class="field"><span>邮箱或用户名</span><input id="auth-account" name="account" autocomplete="username" required placeholder="name@example.com" /></label>
+            <label class="field"><span>密码</span><input id="auth-password" name="password" type="password" autocomplete="current-password" minlength="6" required placeholder="至少 6 位字符" /></label>
+            <label id="auth-name-field" class="field is-hidden"><span>显示名称</span><input id="auth-name" name="name" autocomplete="name" placeholder="你的名字" /></label>
+            <button class="button button-primary button-wide" type="submit"><span id="auth-submit-label">登录</span><span class="button-icon" data-icon="arrow-up-right"></span></button>
+          </form>
+          <div class="auth-divider"><span>或者</span></div>
+          <button class="button button-secondary button-wide" data-action="guest"><span class="button-icon" data-icon="play"></span>游客试用</button>
+          <p class="auth-footnote">游客数据仅保存在本机，注册账户后可接入服务端同步。</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="app-shell" class="app-shell is-hidden">
+      <aside class="sidebar" aria-label="主导航">
+        <div class="sidebar-head">
+          <a class="brand" href="#overview" data-route="overview" aria-label="Agent Lab 首页">
+            <img src="/assets/brand-mark.svg" alt="" />
+            <span><strong>Agent Lab</strong><small>应用工程学习台</small></span>
+          </a>
+          <button class="icon-btn sidebar-close" data-action="close-nav" aria-label="关闭导航" data-icon="x"></button>
+        </div>
+        <div class="workspace-switcher"><span class="workspace-mark">A</span><span><strong>个人学习计划</strong><small>2026 · 应用工程</small></span><span class="icon" data-icon="chevrons"></span></div>
+        <nav id="side-nav" class="side-nav"></nav>
+        <div class="sidebar-bottom">
+          <button class="side-utility" data-route="profile"><span class="nav-icon" data-icon="settings"></span><span>设置</span></button>
+          <button class="profile-mini" data-action="profile-menu"><span class="avatar" id="sidebar-avatar">J</span><span class="profile-copy"><strong id="sidebar-name">Jerry Huang</strong><small id="sidebar-role">学习者</small></span><span class="icon" data-icon="more"></span></button>
+        </div>
+      </aside>
+
+      <div class="app-body">
+        <header class="topbar">
+          <button class="icon-btn mobile-menu" data-action="open-nav" aria-label="打开导航" data-icon="menu"></button>
+          <div class="breadcrumb"><span>Agent Lab</span><span class="breadcrumb-separator">/</span><strong id="page-breadcrumb">学习概况</strong></div>
+          <div class="topbar-actions">
+            <button class="icon-btn" data-action="theme" aria-label="切换主题"></button>
+            <button class="icon-btn has-dot" data-action="notifications" aria-label="查看通知" data-icon="bell"></button>
+            <button class="top-profile" data-action="profile-menu"><span class="avatar" id="top-avatar">J</span><span class="top-profile-name" id="top-name">Jerry</span><span class="icon" data-icon="chevron-down"></span></button>
+          </div>
+        </header>
+        <main id="main-content" class="main-content" tabindex="-1"></main>
+      </div>
+      <nav id="mobile-nav" class="mobile-nav" aria-label="移动端导航"></nav>
+    </section>
+
+    <div id="modal-root"></div>
+    <script src="/app.js" defer></script>
+  </body>
+</html>
