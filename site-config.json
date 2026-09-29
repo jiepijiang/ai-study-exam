@@ -1,8 +1,8 @@
 {
   "version": 1,
   "questionBankVersion": "3.1",
-  "dailyLinkTemplate": "./index.html?date={date}&week={week}&tab=checkin",
-  "examLinkTemplate": "./index.html?date={date}&week={week}&tab=exam",
+  "dailyLinkTemplate": "https://ai-study-exam.onrender.com/?date={date}&week={week}#tasks",
+  "examLinkTemplate": "https://ai-study-exam.onrender.com/?date={date}&week={week}#weekly",
   "checkin": {
     "mode": "local-only",
     "localStorageKey": "ai-agent-learning-evidence-v3",

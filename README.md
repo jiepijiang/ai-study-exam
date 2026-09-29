@@ -40,13 +40,13 @@
 
 题库当前版本为 3.1，共 51 题，包含单选、多选、代码/命令实操和场景 Rubric。练习卷不计入掌握度；正式成绩需要有效打卡、题型覆盖和门禁证据共同满足。
 
-每日提醒链接：
+每日提醒链接（全栈 Render 版本）：
 
-https://jiepijiang.github.io/ai-study-exam/index.html?date=2026-09-28&week=1&tab=checkin
+https://ai-study-exam.onrender.com/?date=2026-09-29&week=1#tasks
 
-周测链接：
+周测链接（全栈 Render 版本）：
 
-https://jiepijiang.github.io/ai-study-exam/index.html?date=2026-09-28&week=1&tab=exam
+https://ai-study-exam.onrender.com/?date=2026-09-29&week=1#weekly
 
 ## 当前边界
 

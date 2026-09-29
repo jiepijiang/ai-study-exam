@@ -1,6 +1,12 @@
 (() => {
   "use strict";
 
+  const startupUrl = new URL(window.location.href);
+  const requestedWeek = Number(startupUrl.searchParams.get("week"));
+  const initialWeek = Number.isInteger(requestedWeek) && requestedWeek >= 1 && requestedWeek <= 16 ? requestedWeek : 1;
+  const requestedDate = startupUrl.searchParams.get("date") || "";
+  const initialDate = /^\d{4}-\d{2}-\d{2}$/.test(requestedDate) ? requestedDate : "";
+
   const routes = {
     overview: { label: "学习概况", icon: "grid", group: "工作台" },
     tasks: { label: "每日任务", icon: "check", group: "工作台" },
@@ -59,7 +65,8 @@
     authMode: "login",
     questionFilter: "",
     questionType: "all",
-    week: 1,
+    week: initialWeek,
+    focusDate: initialDate,
     sprintView: "",
     currentPlan: [],
     report: null
@@ -225,11 +232,13 @@
   async function renderTasks() {
     const data = await load(`/api/sprint?week=${store.week}`, `plan-${store.week}`);
     store.currentPlan = data.items || [];
-    const total = store.currentPlan.reduce((count, entry) => count + (entry.tasks || []).length, 0);
-    const done = store.currentPlan.reduce((count, entry) => count + (entry.tasks || []).filter((task) => task.status === "DONE").length, 0);
-    return `${pageHead("PLAN / 每日任务", "每日任务与证据", "按照日期、任务、产出和证据顺序完成学习；只有服务端记录才会计入闭环。", `<label class="filter-bar" style="margin:0"><span class="sr-only">选择周次</span><select id="task-week">${Array.from({ length: 16 }, (_, index) => `<option value="${index + 1}" ${store.week === index + 1 ? "selected" : ""}>第 ${index + 1} 周</option>`).join("")}</select></label>`)}
-      <div class="metric-grid">${metric("本周任务", total, "学习计划任务总数")}${metric("已完成", done, `${total ? Math.round(done / total * 100) : 0}% 有效完成`, done === total && total ? "success" : "warning")}${metric("计划主题", store.currentPlan[0]?.topic || "-", "按本周第一天显示")}${metric("证据要求", "必填", "路径、命令或复盘摘要")}</div>
-      <div class="timeline-list">${store.currentPlan.map((entry) => `<section class="panel"><div class="panel-head"><div><h2>${formatDate(entry.date)} · ${text(entry.day || "学习日")}</h2><p>${text(entry.topic || entry.stage || "学习任务")} · ${text(entry.focus || "完成计划并留下可复核证据")}</p></div><span class="status ${entry.completedTasks === entry.tasks.length ? "status-success" : "status-warning"}">${entry.completedTasks || 0}/${entry.tasks.length} 已完成</span></div><div class="task-list">${(entry.tasks || []).map((task) => taskEditor(task, entry.date)).join("")}</div></section>`).join("") || emptyState("暂无计划", "请检查服务端是否加载了 daily-plan.json。")}</div>`;
+    const visiblePlan = store.focusDate ? store.currentPlan.filter((entry) => entry.date === store.focusDate) : store.currentPlan;
+    const total = visiblePlan.reduce((count, entry) => count + (entry.tasks || []).length, 0);
+    const done = visiblePlan.reduce((count, entry) => count + (entry.tasks || []).filter((task) => task.status === "DONE").length, 0);
+    const scope = store.focusDate ? `当前提醒日期：${store.focusDate}。` : "";
+    return `${pageHead("PLAN / 每日任务", "每日任务与证据", `按照日期、任务、产出和证据顺序完成学习；只有服务端记录才会计入闭环。${scope}`, `<label class="filter-bar" style="margin:0"><span class="sr-only">选择周次</span><select id="task-week">${Array.from({ length: 16 }, (_, index) => `<option value="${index + 1}" ${store.week === index + 1 ? "selected" : ""}>第 ${index + 1} 周</option>`).join("")}</select></label>`)}
+      <div class="metric-grid">${metric(store.focusDate ? "当天任务" : "本周任务", total, store.focusDate ? "提醒链接指定日期" : "学习计划任务总数")}${metric("已完成", done, `${total ? Math.round(done / total * 100) : 0}% 有效完成`, done === total && total ? "success" : "warning")}${metric("计划主题", visiblePlan[0]?.topic || "-", store.focusDate ? "按提醒日期显示" : "按本周第一天显示")}${metric("证据要求", "必填", "路径、命令或复盘摘要")}</div>
+      <div class="timeline-list">${visiblePlan.map((entry) => `<section class="panel"><div class="panel-head"><div><h2>${formatDate(entry.date)} · ${text(entry.day || "学习日")}</h2><p>${text(entry.topic || entry.stage || "学习任务")} · ${text(entry.focus || "完成计划并留下可复核证据")}</p></div><span class="status ${entry.completedTasks === entry.tasks.length ? "status-success" : "status-warning"}">${entry.completedTasks || 0}/${entry.tasks.length} 已完成</span></div><div class="task-list">${(entry.tasks || []).map((task) => taskEditor(task, entry.date)).join("")}</div></section>`).join("") || emptyState(store.focusDate ? "该日期暂无计划" : "暂无计划", "请检查服务端是否加载了 daily-plan.json。")}</div>`;
   }
 
   function taskEditor(task, date) {
@@ -669,7 +678,7 @@
   });
 
   document.addEventListener("change", async (event) => {
-    if (event.target.id === "task-week" || event.target.id === "exam-week") { store.week = Number(event.target.value); store.cache = {}; await renderRoute(); }
+    if (event.target.id === "task-week" || event.target.id === "exam-week") { store.week = Number(event.target.value); if (event.target.id === "task-week") store.focusDate = ""; store.cache = {}; await renderRoute(); }
     if (event.target.id === "question-type") { store.questionType = event.target.value; await renderRoute(); }
     if (event.target.matches("[data-answer-question]")) { const questionId = event.target.dataset.answerQuestion; const inputs = $$(`[data-answer-question="${CSS.escape(questionId)}"]`); const values = inputs.filter((input) => input.checked).map((input) => Number(input.value)); store.examAnswers[questionId] = event.target.type === "checkbox" ? values : values[0]; await renderRoute(); }
   });
